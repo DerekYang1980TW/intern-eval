@@ -408,31 +408,24 @@
     <!-- 2. 破冰文字雲 -->
     <section id="slide-wordcloud">
       <h2 style="font-size:1.1em; margin-bottom:0.3em;">提到「評核」，你想到什麼？</h2>
-      <p style="font-size:0.4em; color:#aaa; margin-bottom:0.6em;">輸入關鍵字，看大家心中的第一印象</p>
-      <div style="display:grid; grid-template-columns:250px 1fr; gap:14px; height:440px;">
+      <p style="font-size:0.4em; color:#aaa; margin-bottom:0.6em;">手機掃 QR code 加入互動 → 輸入關鍵字</p>
+      <div style="display:grid; grid-template-columns:200px 1fr; gap:14px; height:440px;">
         <div style="display:flex; flex-direction:column; gap:10px;">
-          <div style="background:rgba(255,255,255,0.06); border-radius:10px; padding:14px;">
-            <div style="font-size:0.38em; color:var(--accent2); font-weight:700; margin-bottom:8px;">輸入你的答案</div>
-            <input id="wc-input" type="text" placeholder="例如：壓力、成長、麻煩…" maxlength="20"
-              style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid rgba(79,195,247,0.3);
-                     background:rgba(255,255,255,0.08); color:#fff; font-size:13px;
-                     box-sizing:border-box; font-family:inherit; outline:none;" />
-            <button id="wc-btn"
-              style="width:100%; margin-top:8px; padding:9px; background:var(--accent2); color:#0d1117;
-                     border:none; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer;">
-              送出 ↵
-            </button>
+          <div style="background:#fff; border-radius:10px; padding:10px; text-align:center;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=https%3A%2F%2Fderekyang1980tw.github.io%2Fintern-eval%2Faudience.html%3Ftab%3Dwc"
+                 alt="掃我參與" style="width:100%; height:auto; display:block;">
+            <div style="font-size:10px; color:#0d1117; margin-top:6px; font-weight:700;">掃我加入互動</div>
           </div>
-          <div style="background:rgba(255,255,255,0.06); border-radius:10px; padding:14px; flex:1; overflow:hidden; display:flex; flex-direction:column;">
-            <div style="font-size:0.38em; color:var(--accent2); font-weight:700; margin-bottom:8px;">
+          <div style="background:rgba(255,255,255,0.06); border-radius:10px; padding:12px; flex:1; overflow:hidden; display:flex; flex-direction:column;">
+            <div style="font-size:0.36em; color:var(--accent2); font-weight:700; margin-bottom:8px;">
               熱門答案
               <span style="display:inline-block; background:#ff4757; color:#fff; padding:2px 7px;
                            border-radius:10px; font-size:0.85em; animation:pulse 1.5s infinite;">LIVE</span>
             </div>
-            <div id="wc-list" style="font-size:0.34em; overflow-y:auto; flex:1; color:#ccc;"></div>
-            <div style="margin-top:8px; font-size:0.32em; color:#666; border-top:1px solid rgba(255,255,255,0.08); padding-top:6px;">
+            <div id="wc-list" style="font-size:0.32em; overflow-y:auto; flex:1; color:#ccc;"></div>
+            <div style="margin-top:6px; font-size:0.3em; color:#666; border-top:1px solid rgba(255,255,255,0.08); padding-top:5px;">
               總提交：<span id="wc-total" style="color:var(--accent); font-weight:700;">0</span>
-              不同答案：<span id="wc-unique" style="color:var(--accent2); font-weight:700;">0</span>
+              不同：<span id="wc-unique" style="color:var(--accent2); font-weight:700;">0</span>
             </div>
           </div>
         </div>
@@ -442,7 +435,7 @@
           <div id="wc-empty" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
                                      color:#444; font-size:0.42em; text-align:center;
                                      pointer-events:none; line-height:2;">
-            輸入第一個答案<br>文字雲就會出現 ✨
+            等待學員送出第一個答案<br>文字雲就會出現 ✨
           </div>
         </div>
       </div>
@@ -880,8 +873,15 @@
     <!-- 14. 評核流程小測驗 -->
     <section id="slide-poll">
       <h2>小測驗：mini-CEX 幾分才通過？</h2>
-      <p style="font-size:0.4em; color:#aaa; margin-top:-0.3em;">投票選擇你的答案，看大家的看法</p>
-      <div id="poll-options" style="display:flex; flex-direction:column; gap:12px; margin-top:0.8em;"></div>
+      <p style="font-size:0.4em; color:#aaa; margin-top:-0.3em;">手機掃右側 QR code 投票 → 看大家答對嗎？</p>
+      <div style="display:grid; grid-template-columns: 1fr 200px; gap:24px; margin-top:0.8em; align-items:center;">
+        <div id="poll-options" style="display:flex; flex-direction:column; gap:12px;"></div>
+        <div style="background:#fff; border-radius:10px; padding:10px; text-align:center;">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=https%3A%2F%2Fderekyang1980tw.github.io%2Fintern-eval%2Faudience.html%3Ftab%3Dpoll"
+               alt="掃我投票" style="width:100%; height:auto; display:block;">
+          <div style="font-size:11px; color:#0d1117; margin-top:6px; font-weight:700;">掃我投票</div>
+        </div>
+      </div>
       <div style="font-size:0.38em; color:#666; text-align:center; margin-top:0.8em;">
         已投票：<span id="poll-total">0</span> 人
       </div>

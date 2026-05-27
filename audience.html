@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Intern 評核說明 — 學員互動區</title>
+  <style>
+    :root {
+      --accent:  #e8643a;
+      --accent2: #4fc3f7;
+      --success: #81c784;
+      --bg:      #0d1117;
+      --card:    #1a2030;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      background: var(--bg);
+      color: #eee;
+      font-family: 'Segoe UI', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+    .top {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .top .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+    .top h1 {
+      font-size: 22px;
+      margin: 12px 0 4px;
+      color: var(--accent2);
+    }
+    .top p {
+      font-size: 13px;
+      color: #999;
+      margin: 0;
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 6px;
+    }
+    .tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+      color: #888;
+    }
+    .tab.active {
+      background: var(--accent2);
+      color: #0d1117;
+    }
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .card h2 {
+      font-size: 16px;
+      color: var(--accent2);
+      margin: 0 0 14px;
+    }
+    .card .hint {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(79,195,247,0.3);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      font-size: 16px;
+      outline: none;
+      font-family: inherit;
+    }
+    input[type="text"]:focus {
+      border-color: var(--accent2);
+    }
+    button.primary {
+      width: 100%;
+      margin-top: 12px;
+      padding: 14px;
+      background: var(--accent2);
+      color: #0d1117;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    button.primary:active { transform: scale(0.98); }
+    button.primary:disabled { opacity: 0.5; }
+
+    .option {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: rgba(255,255,255,0.05);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: #eee;
+      font-size: 16px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      text-align: left;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s;
+    }
+    .option:active { transform: scale(0.99); }
+    .option .dot {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      flex: 0 0 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+    .option.voted {
+      border-color: var(--accent2);
+      background: rgba(79,195,247,0.12);
+    }
+    .option.voted .dot {
+      background: var(--accent2);
+      border-color: var(--accent2);
+      color: #0d1117;
+    }
+
+    .submitted-list {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .submitted-list .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 13px;
+      color: #aaa;
+    }
+    .submitted-list .row .me {
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .stats {
+      margin-top: 14px;
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+    }
+    .stats b { color: var(--accent); }
+
+    .voted-info {
+      margin-top: 14px;
+      padding: 12px;
+      background: rgba(129,199,132,0.1);
+      border-left: 3px solid var(--success);
+      border-radius: 6px;
+      font-size: 13px;
+      color: #c8e6c9;
+    }
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 11px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top">
+      <div class="badge">學員互動區</div>
+      <h1>Intern 評核說明</h1>
+      <p>選擇下方項目，配合講師進度作答</p>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="wc">💭 文字雲</div>
+      <div class="tab" data-tab="poll">📊 投票</div>
+    </div>
+
+    <!-- 文字雲 panel -->
+    <div class="panel active" id="panel-wc">
+      <div class="card">
+        <h2>提到「評核」，你想到什麼？</h2>
+        <div class="hint">輸入第一印象的關鍵字（最多 20 字），可以送出多筆</div>
+        <input id="wc-input" type="text" placeholder="例如：壓力、成長、麻煩…" maxlength="20" autocomplete="off" />
+        <button class="primary" id="wc-btn">送出 ↵</button>
+        <div class="submitted-list" id="wc-mylist"></div>
+        <div class="stats">
+          全場累計：<b id="wc-total">0</b> 筆 ・ 不同答案：<b id="wc-unique">0</b> 個
+        </div>
+      </div>
+    </div>
+
+    <!-- 投票 panel -->
+    <div class="panel" id="panel-poll">
+      <div class="card">
+        <h2>小測驗：mini-CEX 幾分才通過？</h2>
+        <div class="hint">直接點選你的答案，可重複更改</div>
+        <div id="poll-options"></div>
+        <div id="poll-voted"></div>
+        <div class="stats">已投票：<b id="poll-total">0</b> 人</div>
+      </div>
+    </div>
+
+    <div class="footer">楊臻繹 醫師 · 教學行政協調醫師</div>
+  </div>
+
+  <!-- 切換 tab -->
+  <script>
+    document.querySelectorAll('.tab').forEach(t => {
+      t.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === t));
+        document.querySelectorAll('.panel').forEach(p => {
+          p.classList.toggle('active', p.id === 'panel-' + t.dataset.tab);
+        });
+      });
+    });
+    // 透過 ?tab= 預選
+    const tabParam = new URLSearchParams(location.search).get('tab');
+    if (tabParam) {
+      const t = document.querySelector(`.tab[data-tab="${tabParam}"]`);
+      if (t) t.click();
+    }
+  </script>
+
+  <!-- Firebase 文字雲 -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js';
+    import {
+      getFirestore, collection, addDoc, onSnapshot,
+      serverTimestamp, query, orderBy
+    } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAYQhNavPSce17XtvDC5xnXyl9iUhW9KjA",
+      authDomain: "teacherstudy-109ef.firebaseapp.com",
+      projectId: "teacherstudy-109ef",
+      storageBucket: "teacherstudy-109ef.firebasestorage.app",
+      messagingSenderId: "196599230156",
+      appId: "1:196599230156:web:cfe55d364df3ae1b9d5c69"
+    };
+    const app = initializeApp(firebaseConfig);
+    const fdb = getFirestore(app);
+    const wordsRef = collection(fdb, 'intern_eval_wordcloud');
+
+    // 紀錄我自己送出過哪些（localStorage，跨重新整理還在）
+    const KEY = 'intern_eval_my_words';
+    let myWords = JSON.parse(localStorage.getItem(KEY) || '[]');
+
+    function renderMyList() {
+      const el = document.getElementById('wc-mylist');
+      if (!myWords.length) {
+        el.innerHTML = '<div style="color:#666;font-size:12px;padding:4px 0;">你還沒送出任何答案</div>';
+        return;
+      }
+      el.innerHTML = '<div style="font-size:12px;color:#888;margin-bottom:6px;">你送出的：</div>' +
+        myWords.map(w => `<div class="row"><span>${escapeHTML(w)}</span><span class="me">✓</span></div>`).join('');
+    }
+    function escapeHTML(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    renderMyList();
+
+    document.getElementById('wc-btn').addEventListener('click', submit);
+    document.getElementById('wc-input').addEventListener('keypress', e => {
+      if (e.key === 'Enter') submit();
+    });
+    async function submit() {
+      const input = document.getElementById('wc-input');
+      const word = input.value.trim();
+      if (!word) return;
+      const btn = document.getElementById('wc-btn');
+      btn.disabled = true;
+      btn.textContent = '送出中…';
+      try {
+        await addDoc(wordsRef, { word, created_at: serverTimestamp() });
+        myWords.unshift(word);
+        if (myWords.length > 20) myWords = myWords.slice(0, 20);
+        localStorage.setItem(KEY, JSON.stringify(myWords));
+        renderMyList();
+        input.value = '';
+        btn.textContent = '✓ 已送出';
+        setTimeout(() => { btn.textContent = '送出 ↵'; btn.disabled = false; }, 800);
+      } catch (e) {
+        console.error(e);
+        btn.textContent = '送出失敗，再試一次';
+        btn.disabled = false;
+      }
+    }
+
+    onSnapshot(query(wordsRef, orderBy('created_at', 'asc')), snap => {
+      const words = [];
+      snap.forEach(d => words.push(d.data().word));
+      const counts = {};
+      words.forEach(w => counts[w] = (counts[w] || 0) + 1);
+      document.getElementById('wc-total').textContent = words.length;
+      document.getElementById('wc-unique').textContent = Object.keys(counts).length;
+    });
+  </script>
+
+  <!-- Firebase 投票 -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js';
+    import {
+      getFirestore, doc, setDoc, onSnapshot, serverTimestamp
+    } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAYQhNavPSce17XtvDC5xnXyl9iUhW9KjA",
+      authDomain: "teacherstudy-109ef.firebaseapp.com",
+      projectId: "teacherstudy-109ef",
+      storageBucket: "teacherstudy-109ef.firebasestorage.app",
+      messagingSenderId: "196599230156",
+      appId: "1:196599230156:web:cfe55d364df3ae1b9d5c69"
+    };
+    const app = initializeApp(firebaseConfig);
+    const fdb = getFirestore(app);
+    const pollRef = doc(fdb, 'intern_eval_poll', 'q1_passing_score');
+
+    const OPTIONS = [
+      { id: 'a', label: '3 分' },
+      { id: 'b', label: '4 分' },
+      { id: 'c', label: '5 分' },
+      { id: 'd', label: '6 分' },
+    ];
+
+    // 持久化 user id（重新整理保持不變）
+    let userId = localStorage.getItem('intern_eval_uid');
+    if (!userId) {
+      userId = 'user_' + Math.random().toString(36).slice(2, 9);
+      localStorage.setItem('intern_eval_uid', userId);
+    }
+    let myVote = null;
+
+    const container = document.getElementById('poll-options');
+    OPTIONS.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'option';
+      btn.dataset.id = opt.id;
+      btn.innerHTML = `<span class="dot" id="dot-${opt.id}"></span><span>${opt.label}</span>`;
+      btn.addEventListener('click', () => vote(opt.id));
+      container.appendChild(btn);
+    });
+
+    async function vote(optId) {
+      myVote = optId;
+      localStorage.setItem('intern_eval_my_vote', optId);
+      document.querySelectorAll('.option').forEach(b => {
+        b.classList.toggle('voted', b.dataset.id === optId);
+        const d = b.querySelector('.dot');
+        d.textContent = b.dataset.id === optId ? '✓' : '';
+      });
+      document.getElementById('poll-voted').innerHTML =
+        `<div class="voted-info">✓ 已記錄你的選擇：<b>${OPTIONS.find(o => o.id === optId).label}</b>　可隨時點其他選項更改</div>`;
+      const data = {};
+      data[`votes.${userId}`] = optId;
+      data.updated_at = serverTimestamp();
+      try {
+        await setDoc(pollRef, data, { merge: true });
+      } catch(e) { console.error(e); }
+    }
+    // 還原上次的選擇
+    const saved = localStorage.getItem('intern_eval_my_vote');
+    if (saved) vote(saved);
+
+    onSnapshot(pollRef, snap => {
+      const data = snap.data() || {};
+      const votes = data.votes || {};
+      const total = Object.keys(votes).length;
+      document.getElementById('poll-total').textContent = total;
+    });
+  </script>
+</body>
+</html>
