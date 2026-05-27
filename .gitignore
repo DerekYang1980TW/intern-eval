@@ -1,0 +1,8 @@
+.DS_Store
+images/regen/
+__pycache__/
+*.pyc
+crop_icons.py
+recrop_icons.py
+process_regen.py
+normalize_icons.py
