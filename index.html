@@ -160,13 +160,11 @@
       flex: 1;
       background: rgba(255,255,255,0.05);
       border-radius: 8px 8px 0 0;
-      padding: 14px 10px;
+      padding: 14px 10px 36px;
       text-align: center;
       border-top: 3px solid #555;
-      display: flex;
-      flex-direction: column;
+      position: relative;
     }
-    .level-step .intern-marker { margin-top: auto; }
     .level-step .lv-num { font-size: 0.55em; font-weight: 800; color: #aaa; }
     .level-step .lv-role {
       font-size: 0.32em;
@@ -183,14 +181,17 @@
     .level-step.l5 { height: 230px; }
     .level-step.l1 .lv-num, .level-step.l2 .lv-num { color: var(--accent2); }
     .intern-marker {
-      align-self: center;
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
       background: var(--accent);
       color: #fff;
-      padding: 2px 10px;
+      padding: 2px 12px;
       border-radius: 10px;
       font-size: 0.5em;
       font-weight: 700;
-      margin-top: 8px;
+      white-space: nowrap;
     }
 
     /* === Demo 標示 === */
