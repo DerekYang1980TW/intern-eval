@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>重置互動資料 — Intern 評核說明</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 24px;
+      background: #0d1117;
+      color: #eee;
+      font-family: 'Segoe UI', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .panel {
+      max-width: 480px;
+      width: 100%;
+      background: #1a2030;
+      border-radius: 16px;
+      padding: 32px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      color: #4fc3f7;
+    }
+    p { color: #aaa; line-height: 1.7; font-size: 14px; }
+    .stats {
+      background: rgba(255,255,255,0.04);
+      border-radius: 10px;
+      padding: 16px;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-row b { color: #e8643a; font-size: 18px; }
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-refresh {
+      background: rgba(255,255,255,0.08);
+      color: #eee;
+      margin-bottom: 10px;
+    }
+    .btn-clear {
+      background: #e8643a;
+      color: #fff;
+    }
+    .btn-clear:disabled { opacity: 0.5; cursor: default; }
+    .btn-clear:active { transform: scale(0.98); }
+    .log {
+      margin-top: 14px;
+      padding: 12px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      font-size: 12px;
+      color: #81c784;
+      min-height: 24px;
+      font-family: monospace;
+    }
+    .log.err { color: #ff8a65; }
+    .warn {
+      background: rgba(255,183,77,0.1);
+      border-left: 3px solid #ffb74d;
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: #ffe0b2;
+    }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <h1>🧹 重置互動資料</h1>
+    <p>清空文字雲與投票的所有資料，回到全新狀態。建議在每場簡報開始前執行一次。</p>
+
+    <div class="warn">⚠️ 一旦清除無法恢復。確認沒有上一場的重要資料要留再執行。</div>
+
+    <div class="stats">
+      <div class="stat-row"><span>文字雲答案數</span><b id="wc-count">—</b></div>
+      <div class="stat-row"><span>投票人數</span><b id="poll-count">—</b></div>
+    </div>
+
+    <button class="btn-refresh" onclick="loadStats()">🔄 重新檢查</button>
+    <button class="btn-clear" id="clear" onclick="clearAll()">清空全部資料</button>
+
+    <div class="log" id="log">點上方按鈕開始</div>
+  </div>
+
+<script>
+const FB = 'https://firestore.googleapis.com/v1/projects/teacherstudy-109ef/databases/(default)/documents';
+const log = (msg, err) => {
+  const el = document.getElementById('log');
+  el.textContent = msg;
+  el.className = err ? 'log err' : 'log';
+};
+
+async function loadStats() {
+  log('讀取中…');
+  try {
+    const r1 = await fetch(FB + '/intern_eval_wordcloud');
+    const j1 = await r1.json();
+    document.getElementById('wc-count').textContent = (j1.documents || []).length;
+
+    const r2 = await fetch(FB + '/intern_eval_poll/q1_passing_score');
+    if (r2.status === 200) {
+      const j2 = await r2.json();
+      const votes = j2.fields?.votes?.mapValue?.fields || {};
+      document.getElementById('poll-count').textContent = Object.keys(votes).length;
+    } else {
+      document.getElementById('poll-count').textContent = 0;
+    }
+    log('✓ 資料載入完成');
+  } catch (e) {
+    log('讀取失敗：' + e.message, true);
+  }
+}
+
+async function clearAll() {
+  if (!confirm('確定要清空所有文字雲與投票資料嗎？')) return;
+  const btn = document.getElementById('clear');
+  btn.disabled = true;
+  btn.textContent = '清除中…';
+  log('清除中…');
+  let wcCleared = 0, pollCleared = false;
+  try {
+    // 清文字雲
+    const r1 = await fetch(FB + '/intern_eval_wordcloud');
+    const j1 = await r1.json();
+    const docs = j1.documents || [];
+    for (const d of docs) {
+      const path = d.name.split('/projects/teacherstudy-109ef/databases/(default)/documents/')[1];
+      await fetch(FB + '/' + path, { method: 'DELETE' });
+      wcCleared++;
+    }
+    // 清投票
+    const r2 = await fetch(FB + '/intern_eval_poll/q1_passing_score', { method: 'DELETE' });
+    pollCleared = r2.status === 200 || r2.status === 404;
+
+    log(`✓ 已清空：文字雲 ${wcCleared} 筆 ・ 投票 ${pollCleared ? '已重置' : '失敗'}`);
+    btn.textContent = '✓ 清空完成';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = '清空全部資料';
+      loadStats();
+    }, 1500);
+  } catch (e) {
+    log('清除失敗：' + e.message, true);
+    btn.disabled = false;
+    btn.textContent = '清空全部資料';
+  }
+}
+
+loadStats();
+</script>
+</body>
+</html>
