@@ -145,12 +145,13 @@ async function clearAll() {
   let wcCleared = 0, pollCleared = false;
   try {
     // 清文字雲
+    // ⚠️ d.name 是 "projects/.../documents/intern_eval_wordcloud/abc123"（無開頭斜線）
+    // 直接用 https://firestore.googleapis.com/v1/ + d.name 組合即可
     const r1 = await fetch(FB + '/intern_eval_wordcloud');
     const j1 = await r1.json();
     const docs = j1.documents || [];
     for (const d of docs) {
-      const path = d.name.split('/projects/teacherstudy-109ef/databases/(default)/documents/')[1];
-      await fetch(FB + '/' + path, { method: 'DELETE' });
+      await fetch('https://firestore.googleapis.com/v1/' + d.name, { method: 'DELETE' });
       wcCleared++;
     }
     // 清投票
