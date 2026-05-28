@@ -391,11 +391,12 @@
       });
       document.getElementById('poll-voted').innerHTML =
         `<div class="voted-info">✓ 已記錄你的選擇：<b>${OPTIONS.find(o => o.id === optId).label}</b>　可隨時點其他選項更改</div>`;
-      const data = {};
-      data[`votes.${userId}`] = optId;
-      data.updated_at = serverTimestamp();
+      // ⚠️ setDoc 不支援點記法（"votes.uid" 會被當字面欄位名），必須用巢狀物件
       try {
-        await setDoc(pollRef, data, { merge: true });
+        await setDoc(pollRef, {
+          votes: { [userId]: optId },
+          updated_at: serverTimestamp()
+        }, { merge: true });
       } catch(e) { console.error(e); }
     }
     // 還原上次的選擇
